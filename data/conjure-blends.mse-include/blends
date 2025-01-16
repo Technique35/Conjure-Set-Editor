@@ -63,9 +63,10 @@ vertical_blend :=
 color_blend :=
 {
 	#### The selected colors
-	colors := sort_text(order: "croygbiv", colors_to_letters(input))
+	colors := sort_text(order: "c(roygbiv)", colors_to_letters(input))
 	if colors == "" then colors := empty_color
 	color_count := length(colors)
+    if color_count == 3 and match(sort_text(order: "[roygbiv]", colors), match:"gvr|vyg|yiv|ioy|obi|bro|rgb") then colors := sort_text(order: "c(rgvyiob)", colors)
 	#### The selected blend
 	offset := 0
 	if contains(input, match:"offset 1") then offset := offset + 1
