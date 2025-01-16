@@ -1,4 +1,4 @@
-﻿
+
 round :=
 {
 	if		input == 0
@@ -330,9 +330,16 @@ type_script :=
 	)
 }
 
-mana_filter :=
-	to_upper +
-	sort_text@(order: "[/ROYGBIVX0123456789]")
+mana_is_wedge := { number_of_items(in: sort_text(order:"<ROYGBIV>")) == 3 }
+mana_has_wedge := { mana_is_wedge() and match(sort_text(order:"(<RGVYIOB>)"), match:"RGV|GVY|VYI|YIO|IOB|OBR|BRG") }
+mana_has_hybrid := match@(match: "[/|]")
+
+mana_filter := 
+    to_upper + {
+	if mana_has_hybrid() then sort_text(order: "[/(ROYGBIV)X[0123456789]]")
+    else if mana_has_wedge() then sort_text(order: "/(RGVYIOB)X[0123456789]")
+    else sort_text(order: "/(ROYGBIV)X[0123456789]")
+    }
 
 mana_cost_sort_ROYGBIV :=
 	mana_filter +
@@ -340,13 +347,19 @@ mana_cost_sort_ROYGBIV :=
 	replace@(
 		match: "././.",
 		in_context: "(^|[^/])<match>($|[^/])",
-		replace: {sort_text(order:"in_place(9876543210ROYGBIV)")}
+		replace: {sort_text(order:"in_place(9876543210(ROYGBIV))")}
+	) +
+    ### sort hybrid wedges
+    replace@(
+		match: "G/V/R|V/Y/G|Y/I/V|I/O/Y|O/B/I|B/R/O|R/G/B",
+		in_context: "(^|[^/])<match>($|[^/])",
+		replace: {sort_text(order:"in_place(9876543210(RGVYIOB))")}
 	) +
 	### sort hybrid pairs
 	replace@(
 		match: "./.",
 		in_context: "(^|[^/])<match>($|[^/])",
-		replace: {sort_text(order:"in_place(9876543210ROYGBIV)")}
+		replace: {sort_text(order:"in_place(9876543210(ROYGBIV))")}
 	) +
 	### move number hybrids at the end
 	replace@(
