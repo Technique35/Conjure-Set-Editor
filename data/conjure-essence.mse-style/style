@@ -1,4 +1,4 @@
-﻿mse version: 2.5.0
+mse version: 2.5.0
 game: conjure
 short name: Essence
 icon: thumbnail.png
@@ -77,6 +77,8 @@ init script:
 	symbol_padding := { 66 }
 	symbol_size := { 190 }
 	symbol_count := { length(colors_to_letters(card.frame_1)) }
+	is_wedge := { symbol_count() == 3 and match(sort_text(colors_to_letters(card.frame_1), order:"(<rgvyiob>)"), match:"rgv|gvy|vyi|yio|iob|obr|brg") }
+	color_sort := { if is_wedge() then sort_text( order: "c(rgvyiob)", colors_to_letters(card.frame_1)) else sort_text( order: "c(roygbiv)", colors_to_letters(card.frame_1)) }
 	symbol_position :=
 	{
 		total_available_space := stylesheet.card_width		- 2 * symbol_padding()	- 2 * bleed
@@ -600,7 +602,7 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 1 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[0] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[0] + ".png" }
 	mana symbol 2:
 		left:				{ symbol_position(2) - symbol_size()/2 }
 		top:				{ 1776 + bleed }
@@ -610,7 +612,7 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 2 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[1] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[1] + ".png" }
 	mana symbol 3:
 		left:				{ symbol_position(3) - symbol_size()/2 }
 		top:				{ 1776 + bleed }
@@ -620,7 +622,7 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 3 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[2] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[2] + ".png" }
 	mana symbol 4:
 		left:				{ symbol_position(4) - symbol_size()/2 }
 		top:				{ 1776 + bleed }
@@ -630,7 +632,7 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 4 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[3] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[3] + ".png" }
 	mana symbol 5:
 		left:				{ symbol_position(5) - symbol_size()/2 }
 		top:				{ 1776 + bleed }
@@ -640,7 +642,7 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 5 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[4] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[4] + ".png" }
 	mana symbol 6:
 		left:				{ symbol_position(6) - symbol_size()/2 }
 		top:				{ 1776 + bleed }
@@ -650,7 +652,7 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 6 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[5] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[5] + ".png" }
 	mana symbol 7:
 		left:				{ symbol_position(7) - symbol_size()/2 }
 		top:				{ 1776 + bleed }
@@ -660,7 +662,7 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 7 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[6] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[6] + ".png" }
 	mana symbol 8:
 		left:				{ symbol_position(8) - symbol_size()/2 }
 		top:				{ 1776 + bleed }
@@ -670,4 +672,4 @@ extra card style:
 		visible:			{ is_symboled() and symbol_count() >= 8 }
 		popup style:		in place
 		render style:		image
-		image:				{ "mana symbols/" + colors_to_letters(card.frame_1)[7] + ".png" }
+		image:				{ "mana symbols/" + color_sort()[7] + ".png" }
