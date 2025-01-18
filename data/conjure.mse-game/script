@@ -331,7 +331,7 @@ type_script :=
 }
 
 mana_is_wedge := { number_of_items(in: sort_text(order:"<ROYGBIV>")) == 3 }
-mana_has_wedge := { mana_is_wedge() and match(sort_text(order:"(<RGVYIOB>)"), match:"RGV|GVY|VYI|YIO|IOB|OBR|BRG") }
+mana_has_wedge := { mana_is_wedge() and match(sort_text(order:"(RGVYIOB)", sort_text(order:"<RGVYIOB>")), match:"RGV|GVY|VYI|YIO|IOB|OBR|BRG") }
 mana_has_hybrid := match@(match: "[/|]")
 
 mana_filter := 
