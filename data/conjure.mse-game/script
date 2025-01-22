@@ -330,13 +330,28 @@ type_script :=
 	)
 }
 
-mana_is_wedge := { number_of_items(in: sort_text(order:"<ROYGBIV>")) == 3 }
-mana_has_wedge := { mana_is_wedge() and match(sort_text(order:"(RGVYIOB)", sort_text(order:"<RGVYIOB>")), match:"RGV|GVY|VYI|YIO|IOB|OBR|BRG") }
+unique_mana := sort_text@(order: "<ROYGBIV>")
+mana_is_web := { number_of_items(in: unique_mana()) == 4 }
+mana_has_web := { mana_is_web() and match(sort_text(order:"(ROYGBIV)", unique_mana()), match:"RYBI|OGIV|YBVR|GIRO|BVOY|IRYG|VOGB") }
+mana_is_wedge := { number_of_items(in: unique_mana()) == 3 }
+mana_has_wedge := { mana_is_wedge() and match(sort_text(order:"(RGVYIOB)", unique_mana()), match:"RGV|GVY|VYI|YIO|IOB|OBR|BRG") }
 mana_has_hybrid := match@(match: "[/|]")
+
+web_sort := {
+    if      sort_text(order:"(ROYGBIV)", unique_mana()) == "RYBI" then sort_text(order: "YBIRX[0123456789]")
+    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "OGIV" then sort_text(order: "GIVOX[0123456789]")
+    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "YBVR" then sort_text(order: "BVRYX[0123456789]")
+    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "GIRO" then sort_text(order: "IROGX[0123456789]")
+    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "BVOY" then sort_text(order: "VOYBX[0123456789]")
+    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "IRYG" then sort_text(order: "RYGIX[0123456789]")
+    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "VOGB" then sort_text(order: "OBGVX[0123456789]")
+    else sort_text(order: "/(ROYGBIV)X[0123456789]")
+    }
 
 mana_filter := 
     to_upper + {
 	if mana_has_hybrid() then sort_text(order: "[/(ROYGBIV)X[0123456789]]")
+    else if mana_has_web() then web_sort()
     else if mana_has_wedge() then sort_text(order: "/(RGVYIOB)X[0123456789]")
     else sort_text(order: "/(ROYGBIV)X[0123456789]")
     }
