@@ -1,6 +1,7 @@
 MSE to Cockatrice Exporter - README
 By K'yoril, using code from Pichoro, Idle Muse, Innuendo and Seeonee
 Updated by Reuben Covington
+Adapted for Conjure by Tech35
 
 Make sure you have updated cockatrice!
 
