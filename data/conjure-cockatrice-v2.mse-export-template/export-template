@@ -1,4 +1,4 @@
-﻿mse version: 2.5.0
+mse version: 2.5.0
 short name: Cockatrice
 full name: Exporter v2.1
 position hint: 100
@@ -27,7 +27,11 @@ option field:
 	type: text
 	name: cockatrice Set Type
 	description: The "set type" your set will appear as in Cockatrice. "Custom" should be the default.
-	default: Custom
+	default: Conjure
+option field:
+	type: text
+	name: set Code
+	description: Set Code used for Cockatrice. Should be based on the name of the Saga.
 option field:
 	type: choice
 	name: export Images
@@ -79,7 +83,7 @@ script:
 		+ replace@(match:"\<",replace:"\\&lt;") #escape less than sign
 		#+ replace@(match:"\>",replace:"\\&gt;") #escape greater than sign, for some reason this upsets mse and they are technically not needed to escape
 	
-	setcode := "BEG"
+	setcode := options.set_Code
 	aha := {
 		if      (card.orb_1 == "health")            and (card.orb_2 == "hidden")            and (card.orb_3 == "hidden") then "_/"              + card.stat_1
 		else if (card.orb_1 == "health and arcane") and (card.orb_2 == "hidden")            and (card.orb_3 == "hidden") then "_/"              + card.stat_1 + ":" + card.stat_1
@@ -275,13 +279,13 @@ script:
 	format_file_name := {
 		options.append_String_To_Names
 		+ input
-		+ (if is_token() and options.append_Set_Code_To_Tokens then " " + set.set_code else "")
+		+ " " + setcode
 		+ "." + file_type()
 	}
 	write_single_image := {
 		write_image_file(
 			card,
-			directory: set.set_code,
+			directory: setcode,
 			file: format_file_name(strip_card_name(card_name())),
 			width: 1644
 			height: 2244
@@ -301,7 +305,7 @@ script:
 						else strip_card_name(card_name()) + "_" + region_name
 			write_image_file(
 				region_image,
-				directory: set.set_code,
+				directory: setcode,
 				file: format_file_name(face_name)
 				width: 1644
 				height: 2244
@@ -318,7 +322,7 @@ script:
 	#Main export script
 
 	#tokens in Separate XML
-	if options.emblems_In_Separate_XML then write_text_file(file:set.set_code + " Emblems" + ".xml", to_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_carddatabase version=\"4\">\n  <cards>\n"+write_all_tokens+"\n\n  </cards>\n</cockatrice_carddatabase>"))
+	if options.emblems_In_Separate_XML then write_text_file(file:setcode + " Emblems" + ".xml", to_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_carddatabase version=\"4\">\n  <cards>\n"+write_all_tokens+"\n\n  </cards>\n</cockatrice_carddatabase>"))
 
 	#other cards
-	to_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_carddatabase version=\"4\">\n  <sets>\n	  <set>\n	   <name>"+"</name>\n	   <longname>"+xml_escape(set.title)+"</longname>\n		 <settype>"+xml_escape(options.cockatrice_Set_Type)+"</settype>\n	 </set>\n  </sets>\n  <cards>\n"+write_cards+if not(options.emblems_In_Separate_XML) then ("\n\n	<!-->Tokens</-->\n"+write_all_tokens)+"\n\n	 </cards>\n</cockatrice_carddatabase>")
+	to_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_carddatabase version=\"4\">\n  <sets>\n	  <set>\n	   <name>"+setcode+"</name>\n	   <longname>"+xml_escape(set.saga)+"</longname>\n		 <settype>"+xml_escape(options.cockatrice_Set_Type)+"</settype>\n	 </set>\n  </sets>\n  <cards>\n"+write_cards+if not(options.emblems_In_Separate_XML) then ("\n\n	<!-->Tokens</-->\n"+write_all_tokens)+"\n\n	 </cards>\n</cockatrice_carddatabase>")
