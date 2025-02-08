@@ -5,17 +5,11 @@ round :=
 		or	input == "0"
 		or	input == "0.0"
 		or	input == "" then 0
-	else if	input > 0 then
-	(
-		int := to_int(input)
-		dec := input-int
-		if dec >= 0.5 then int+1 else int
-	)
 	else
 	(
 		int := to_int(input)
-		dec := input-int
-		if dec <= -0.5 then int-1 else int
+		half := if int > 0 then 0.5 else -0.5
+		to_int(half+input)
 	)
 }
 

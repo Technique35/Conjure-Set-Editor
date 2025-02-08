@@ -1,4 +1,4 @@
-﻿mse version: 2.5.0
+﻿mse version: 2.5.6
 short name: Spreadsheet
 full name: Tab Separated values
 position hint: 000
@@ -7,6 +7,9 @@ version: 2024-08-31
 
 depends on:
 	package: conjure.mse-game
+	version: 2024-08-31
+depends on:
+	package: conjure-shared.mse-include
 	version: 2024-08-31
 
 game: conjure
@@ -18,7 +21,8 @@ option field:
 	name: export images
 	description: Should card images be exported as well?
 	choice: Yes, With Bleed Margin
-	choice: Yes, Without Bleed Margin
+	choice: Yes, With Transparent Corners
+	choice: Yes, Without Margin Or Corners
 	choice: No
 	initial: No
 
@@ -26,12 +30,11 @@ option field:
 	type: choice
 	name: image resolution
 	description: What size to export to.
-	choice: 200%    (Bigger File Size, Better Quality)
-	choice: 150%
-	choice: 100%
-	choice: 50%
-	choice: 25%      (Smaller File Size, Worse Quality)
-	initial: 100%
+	choice: 3000x4200     (Bigger File Size, Better Quality)
+	choice: 1500x2100
+	choice: 750x1050
+	choice: 375x525         (Smaller File Size, Worse Quality)
+	initial: 1500x2100
 
 option field:
 	type: choice
@@ -86,8 +89,14 @@ script:
 	exporter_name_grabber := replace@(match:"!exporte?r?name ", replace:"")
 	
 	extension_value := to_lower(replace(options.image_extension, match: " .*", replace: ""))
-	zoom_value := to_int(replace(options.image_resolution, match: "%.*", replace: ""))
-	trim_value := if options.export_images == "Yes, Without Bleed Margin" then bleed else 0
+	zoom_value := round(to_int(replace(options.image_resolution, match: "x.*", replace: ""))/15)
+	trim_value := if options.export_images == "Yes, With Transparent Corners" or options.export_images == "Yes, Without Margin Or Corners" then bleed else 0
+	corner_value := options.export_images == "Yes, With Transparent Corners"
+	corner_mask := "/conjure-shared.mse-include/corner mask.png"
+	
+	card_offset := trim_value*zoom_value/100
+	card_width := (stylesheet.card_width-2*trim_value)*zoom_value/100
+	card_height := (stylesheet.card_height-2*trim_value)*zoom_value/100
 	
 	name_list := []
 	
@@ -128,11 +137,12 @@ script:
 	{
 		export_image := crop(
 			to_card_image(card, zoom: zoom_value, angle: 0),
-			offset_x: trim_value*zoom_value/100,
-			offset_y: trim_value*zoom_value/100,
-			width: (stylesheet.card_width-2*trim_value)*zoom_value/100,
-			height: (stylesheet.card_height-2*trim_value)*zoom_value/100
+			offset_x: card_offset,
+			offset_y: card_offset,
+			width: card_width,
+			height: card_height
 		)
+		if corner_value then export_image := set_mask(image: export_image, mask: corner_mask)
 		export_name := exporter_name_grabber(exporter_name_filter(card.notes))
 		if export_name == "" then export_name := card.name
 		count := list_occurence_count(export_name, list: name_list)
