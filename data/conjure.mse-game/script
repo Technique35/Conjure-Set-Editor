@@ -337,24 +337,26 @@ mana_is_wedge := { number_of_items(in: unique_mana()) == 3 }
 mana_has_wedge := { mana_is_wedge() and match(sort_text(order:"(RGVYIOB)", unique_mana()), match:"RGV|GVY|VYI|YIO|IOB|OBR|BRG") }
 mana_has_hybrid := match@(match: "[/|]")
 
-web_sort := {
-    if      sort_text(order:"(ROYGBIV)", unique_mana()) == "RYBI" then sort_text(order: "YBIRX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "OGIV" then sort_text(order: "GIVOX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "YBVR" then sort_text(order: "BVRYX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "GIRO" then sort_text(order: "IROGX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "BVOY" then sort_text(order: "VOYBX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "IRYG" then sort_text(order: "RYGIX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "VOGB" then sort_text(order: "OBGVX[0123456789]")
-    else sort_text(order: "/(ROYGBIV)X[0123456789]")
-    }
+web_sort :=
+{
+	if		sort_text(order:"(ROYGBIV)", unique_mana()) == "RYBI" then sort_text(order: "YBIRX[0123456789]")
+	else if	sort_text(order:"(ROYGBIV)", unique_mana()) == "OGIV" then sort_text(order: "GIVOX[0123456789]")
+	else if	sort_text(order:"(ROYGBIV)", unique_mana()) == "YBVR" then sort_text(order: "BVRYX[0123456789]")
+	else if	sort_text(order:"(ROYGBIV)", unique_mana()) == "GIRO" then sort_text(order: "IROGX[0123456789]")
+	else if	sort_text(order:"(ROYGBIV)", unique_mana()) == "BVOY" then sort_text(order: "VOYBX[0123456789]")
+	else if	sort_text(order:"(ROYGBIV)", unique_mana()) == "IRYG" then sort_text(order: "RYGIX[0123456789]")
+	else if	sort_text(order:"(ROYGBIV)", unique_mana()) == "VOGB" then sort_text(order: "OBGVX[0123456789]")
+	else sort_text(order: "/(ROYGBIV)X[0123456789]")
+}
 
-mana_filter := 
-    to_upper + {
-	if mana_has_hybrid() then sort_text(order: "[/(ROYGBIV)X[0123456789]]")
-    else if mana_has_web() then web_sort()
-    else if mana_has_wedge() then sort_text(order: "/(RGVYIOB)X[0123456789]")
-    else sort_text(order: "/(ROYGBIV)X[0123456789]")
-    }
+mana_filter :=
+	to_upper +
+	{
+		if mana_has_hybrid() then sort_text(order: "[/(ROYGBIV)X[0123456789]]")
+		else if mana_has_web() then web_sort()
+		else if mana_has_wedge() then sort_text(order: "/(RGVYIOB)X[0123456789]")
+		else sort_text(order: "/(ROYGBIV)X[0123456789]")
+	}
 
 mana_cost_sort_ROYGBIV :=
 	mana_filter +
@@ -364,8 +366,8 @@ mana_cost_sort_ROYGBIV :=
 		in_context: "(^|[^/])<match>($|[^/])",
 		replace: {sort_text(order:"in_place(9876543210(ROYGBIV))")}
 	) +
-    ### sort hybrid wedges
-    replace@(
+	### sort hybrid wedges
+	replace@(
 		match: "G/V/R|V/Y/G|Y/I/V|I/O/Y|O/B/I|B/R/O|R/G/B",
 		in_context: "(^|[^/])<match>($|[^/])",
 		replace: {sort_text(order:"in_place(9876543210(RGVYIOB))")}
@@ -606,15 +608,15 @@ rule_text_script :=
 	) +
 	### step 6 : automatic capitalization, but not after "("
 	replace@(
-		match: "([ ]*: |—| — )"		### preceded by this
-		     + "([[:lower:]])"		### match this
-		     + "(?![)])",			### not followed by this
+		match:		"([ ]*: |—| — )"	### preceded by this
+				+	"([[:lower:]])"		### match this
+				+	"(?![)])",			### not followed by this
 		replace: { _1 + to_upper(_2) }
 	) +
 	### step 7 : fix for soft line breaks
 	fix_soft_line +
 	### step 8 : spellcheck
-	{ 
+	{
 		if set.spell_check then
 		check_spelling(
 			language: "en_US",
