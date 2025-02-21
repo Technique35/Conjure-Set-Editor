@@ -70,9 +70,6 @@ init script:
 		italic: {"Book Antiqua Italic"}
 	]
 	
-	namebox_background_image := { background_image(color: styling.namebox_color, alpha: styling.namebox_opacity_percentage) }
-	typebox_background_image := { background_image(color: styling.typebox_color, alpha: styling.typebox_opacity_percentage) }
-	
 	is_symboled := { styling.mana_symbols }
 	symbol_padding := { 66 }
 	symbol_size := { 190 }
@@ -87,7 +84,7 @@ init script:
 	
 	border_mask :=
 	{
-		base := to_image("/conjure-shared.mse-include/outer border mask" + (if card.outer_border_1 == "bottom" or card.outer_border_1 == "bottom full art" then " bottom" else "") + ".png")
+		base := to_image("outer border mask" + (if card.outer_border_1 == "bottom" or card.outer_border_1 == "bottom full art" then " bottom" else "") + ".png")
 		count := symbol_count()
 		if is_symboled() and count >= 1 then
 		(
@@ -105,16 +102,14 @@ init script:
 	
 	art_mask :=
 	{
-		boxes :=	"image " + (if styling.textbox then "textbox " else "") + "mask.png"
-		outer :=	"/conjure-shared.mse-include/outer border image mask" + (if card.outer_border_1 == "bottom" or card.outer_border_1 == "bottom full art" then " bottom" else "") + ".png"
-		final :=	if card.outer_border_1 == "hidden" then boxes else combine_blend(image1: boxes, image2: outer, combine: "multiply")
-		crop(final, offset_x: 2 * art_left(), offset_y: 2 * art_top(), width: 2 * (art_right() - art_left()), height: 2 * (art_bottom() - art_top()))
+		base := "outer border image mask" + (if card.outer_border_1 == "bottom" or card.outer_border_1 == "bottom full art" then " bottom" else "") + (if styling.textbox then " textbox" else "") + ".png"
+		if card.outer_border_1 == "hidden" then "" else crop(base, offset_x: 2 * art_left(), offset_y: 2 * art_top(), width: 2 * (art_right() - art_left()), height: 2 * (art_bottom() - art_top()))
 	}
 	
 	art_left :=		{ 0 }
 	art_right :=	{ stylesheet.card_width }
-	art_top :=		{ if styling.stretch_art_to_whole_card or card.outer_border_1 != "top and bottom"	then 0						else 310 + bleed }
-	art_bottom :=	{ if styling.stretch_art_to_whole_card or card.outer_border_1 == "hidden"			then stylesheet.card_height	else 1866 + bleed }
+	art_top :=		{ if styling.stretch_art_to_whole_card or card.outer_border_1 != "top and bottom"	then 0						else if transparent_namebox() then 87 + bleed	else if transparent_typebox() then 222 + bleed	else 310 + bleed }
+	art_bottom :=	{ if styling.stretch_art_to_whole_card or card.outer_border_1 == "hidden"			then stylesheet.card_height																									else 1866 + bleed }
 
 ####################################### Styling fields
 
@@ -144,12 +139,16 @@ styling field:
 	description:	Formatted as "font name;font size;font color;vertical offset;italic font name" last 4 are optional. Color can be a name or R,G,B,A numbers.
 styling field:
 	type:			text
+	name:			namebox background opacity percentage
+	description:	Set the opacity percentage for the namebox background. Opaque is 100, transparent is 0, default is 100.
+styling field:
+	type:			text
 	name:			namebox opacity percentage
-	description:	Set the opacity percentage for the namebox. Opaque is 100, transparent is 0, default is 45.
+	description:	Set the opacity percentage for the filter in the namebox. Opaque is 100, transparent is 0, default is 45.
 styling field:
 	type:			color
 	name:			namebox color
-	description:	Use the specified color for the namebox background.
+	description:	Use the specified color for the filter in the namebox.
 	choice:
 		name:			black
 		color:			rgb(0,0,0)
@@ -169,12 +168,16 @@ styling field:
 	description:	Formatted as "font name;font size;font color;vertical offset;italic font name" last 4 are optional. Color can be a name or R,G,B,A numbers.
 styling field:
 	type:			text
+	name:			typebox background opacity percentage
+	description:	Set the opacity percentage for the typebox background. Opaque is 100, transparent is 0, default is 100.
+styling field:
+	type:			text
 	name:			typebox opacity percentage
-	description:	Set the opacity percentage for the typebox. Opaque is 100, transparent is 0, default is 45.
+	description:	Set the opacity percentage for the filter in the typebox. Opaque is 100, transparent is 0, default is 45.
 styling field:
 	type:			color
 	name:			typebox color
-	description:	Use the specified color for the textbox background.
+	description:	Use the specified color for the filter in the textbox.
 	choice:
 		name:			black
 		color:			rgb(0,0,0)
@@ -217,12 +220,16 @@ styling field:
 #	description:	Formatted as "font name;font size;font color;vertical offset;italic font name" last 4 are optional. Color can be a name or R,G,B,A numbers.
 styling field:
 	type:			text
+	name:			textbox background opacity percentage
+	description:	Set the opacity percentage for the textbox background. Opaque is 100, transparent is 0, default is 100.
+styling field:
+	type:			text
 	name:			textbox opacity percentage
-	description:	Set the opacity percentage for the textbox. Opaque is 100, transparent is 0, default is 45.
+	description:	Set the opacity percentage for the filter in the textbox. Opaque is 100, transparent is 0, default is 45.
 styling field:
 	type:			color
 	name:			textbox color
-	description:	Use the specified color for the textbox background.
+	description:	Use the specified color for the filter in the textbox.
 	choice:
 		name:			black
 		color:			rgb(0,0,0)
@@ -250,7 +257,7 @@ card style:
 		top:				0
 		width:				{ stylesheet.card_width }
 		height:				{ stylesheet.card_height }
-		z index:			50
+		z index:			52
 		popup style:		in place
 		render style:		image
 		choice images:
@@ -269,7 +276,7 @@ card style:
 			blend offset 2:		/conjure.mse-game/blend icons/offset 2.png
 			blend offset 4:		/conjure.mse-game/blend icons/offset 4.png
 		image:				{ color_blend(card.frame_1, folder: "card top") }
-		mask:				{ "card " + (if styling.textbox then "textbox " else "") + "mask.png" }
+		mask:				{ "card mask" + (if styling.textbox then " textbox" else "") + ".png" }
 	outer border 1:
 		left:				0
 		top:				0
@@ -483,6 +490,24 @@ extra card field:
 	choice:				frame textbox
 extra card field:
 	type:				choice
+	name:				textbox
+	editable:			false
+	save value:			false
+	choice:				textbox
+extra card field:
+	type:				choice
+	name:				namebox
+	editable:			false
+	save value:			false
+	choice:				namebox
+extra card field:
+	type:				choice
+	name:				typebox
+	editable:			false
+	save value:			false
+	choice:				typebox
+extra card field:
+	type:				choice
 	name:				textbox background
 	editable:			false
 	save value:			false
@@ -556,13 +581,41 @@ extra card style:
 		top:				0
 		width:				{ stylesheet.card_width }
 		height:				{ stylesheet.card_height }
-		z index:			30
+		z index:			32
 		visible:			{ styling.textbox }
 		popup style:		in place
 		render style:		image
 		image:				{ color_blend(card.frame_1, folder: "card bottom") }
-		mask:				{ "card " + (if styling.textbox then "textbox " else "") + "mask.png" }
+		mask:				{ "card mask" + (if styling.textbox then " textbox" else "") + ".png" }
 	textbox background:
+		left:				0
+		top:				0
+		width:				{ stylesheet.card_width }
+		height:				{ stylesheet.card_height }
+		z index:			30
+		visible:			{ styling.textbox }
+		popup style:		in place
+		render style:		image
+		image:				{ textbox_background_image() }
+	namebox background:
+		left:				0
+		top:				0
+		width:				{ stylesheet.card_width }
+		height:				{ stylesheet.card_height }
+		z index:			50
+		popup style:		in place
+		render style:		image
+		image:				{ namebox_background_image() }
+	typebox background:
+		left:				0
+		top:				0
+		width:				{ stylesheet.card_width }
+		height:				{ stylesheet.card_height }
+		z index:			50
+		popup style:		in place
+		render style:		image
+		image:				{ typebox_background_image() }
+	textbox:
 		left:				0
 		top:				0
 		width:				{ stylesheet.card_width }
@@ -571,9 +624,9 @@ extra card style:
 		visible:			{ styling.textbox }
 		popup style:		in place
 		render style:		image
-		image:				{ textbox_background_image() }
+		image:				{ textbox_image() }
 		mask:				textbox mask.png
-	namebox background:
+	namebox:
 		left:				0
 		top:				0
 		width:				{ stylesheet.card_width }
@@ -581,9 +634,9 @@ extra card style:
 		z index:			51
 		popup style:		in place
 		render style:		image
-		image:				{ namebox_background_image() }
+		image:				{ namebox_image() }
 		mask:				/conjure-shared.mse-include/namebox mask.png
-	typebox background:
+	typebox:
 		left:				0
 		top:				0
 		width:				{ stylesheet.card_width }
@@ -591,7 +644,7 @@ extra card style:
 		z index:			51
 		popup style:		in place
 		render style:		image
-		image:				{ typebox_background_image() }
+		image:				{ typebox_image() }
 		mask:				/conjure-shared.mse-include/typebox mask.png
 	mana symbol 1:
 		left:				{ symbol_position(1) - symbol_size()/2 }
