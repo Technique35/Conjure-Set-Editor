@@ -144,7 +144,7 @@ styling field:
 styling field:
 	type:			text
 	name:			namebox opacity percentage
-	description:	Set the opacity percentage for the filter in the namebox. Opaque is 100, transparent is 0, default is 45.
+	description:	Set the opacity percentage for the filter in the namebox. Opaque is 100, transparent is 0, default is 68.
 styling field:
 	type:			color
 	name:			namebox color
@@ -173,7 +173,7 @@ styling field:
 styling field:
 	type:			text
 	name:			typebox opacity percentage
-	description:	Set the opacity percentage for the filter in the typebox. Opaque is 100, transparent is 0, default is 45.
+	description:	Set the opacity percentage for the filter in the typebox. Opaque is 100, transparent is 0, default is 68.
 styling field:
 	type:			color
 	name:			typebox color
@@ -225,7 +225,7 @@ styling field:
 styling field:
 	type:			text
 	name:			textbox opacity percentage
-	description:	Set the opacity percentage for the filter in the textbox. Opaque is 100, transparent is 0, default is 45.
+	description:	Set the opacity percentage for the filter in the textbox. Opaque is 100, transparent is 0, default is 68.
 styling field:
 	type:			color
 	name:			textbox color
