@@ -279,8 +279,7 @@ script:
 	format_file_name := {
 		options.append_String_To_Names
 		+ input
-		+ " " + setcode
-		+ "." + file_type()
+		+ ".full." + file_type()
 	}
 	write_single_image := {
 		write_image_file(
@@ -325,4 +324,4 @@ script:
 	if options.emblems_In_Separate_XML then write_text_file(file:setcode + " Emblems" + ".xml", to_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_carddatabase version=\"4\">\n  <cards>\n"+write_all_tokens+"\n\n  </cards>\n</cockatrice_carddatabase>"))
 
 	#other cards
-	to_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_carddatabase version=\"4\">\n  <sets>\n	  <set>\n	   <name>"+setcode+"</name>\n	   <longname>"+xml_escape(set.saga)+"</longname>\n		 <settype>"+xml_escape(options.cockatrice_Set_Type)+"</settype>\n	 </set>\n  </sets>\n  <cards>\n"+write_cards+if not(options.emblems_In_Separate_XML) then ("\n\n	<!-->Tokens</-->\n"+write_all_tokens)+"\n\n	 </cards>\n</cockatrice_carddatabase>")
+	to_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_carddatabase version=\"4\">\n  <sets>\n	  <set>\n	   <name>"+setcode+"</name>\n	   <longname>"+xml_escape(set.title)+"</longname>\n		 <settype>"+xml_escape(options.cockatrice_Set_Type)+"</settype>\n	 </set>\n  </sets>\n  <cards>\n"+write_cards+if not(options.emblems_In_Separate_XML) then ("\n\n	<!-->Tokens</-->\n"+write_all_tokens)+"\n\n	 </cards>\n</cockatrice_carddatabase>")
