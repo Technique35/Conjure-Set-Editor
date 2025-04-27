@@ -66,15 +66,15 @@ color_blend :=
 	colors := sort_text(order: "c(roygbiv)", colors_to_letters(input))
 	if colors == "" then colors := empty_color
 	color_count := length(colors)
-    if match(sort_text(order: "[roygbiv]", colors), match:"gvr|vyg|yiv|ioy|obi|bro|rgb") then colors := sort_text(order: "c(rgvyiob)", colors)
-    #### Web sorting
-    if match(sort_text(order: "[roygbiv]", colors), match:"rybi") then colors := sort_text(order: "cybir", colors)
-    if match(sort_text(order: "[roygbiv]", colors), match:"ogiv") then colors := sort_text(order: "cgivo", colors)
-    if match(sort_text(order: "[roygbiv]", colors), match:"ybvr") then colors := sort_text(order: "cbvry", colors)
-    if match(sort_text(order: "[roygbiv]", colors), match:"giro") then colors := sort_text(order: "cirog", colors)
-    if match(sort_text(order: "[roygbiv]", colors), match:"bvoy") then colors := sort_text(order: "cvoyb", colors)
-    if match(sort_text(order: "[roygbiv]", colors), match:"iryg") then colors := sort_text(order: "crygi", colors)
-    if match(sort_text(order: "[roygbiv]", colors), match:"vogb") then colors := sort_text(order: "cogbv", colors)
+	if match(sort_text(order: "[roygbiv]", colors), match:"gvr|vyg|yiv|ioy|obi|bro|rgb") then colors := sort_text(order: "c(rgvyiob)", colors)
+	#### Web sorting
+	if match(sort_text(order: "[roygbiv]", colors), match:"rybi") then colors := sort_text(order: "cybir", colors)
+	if match(sort_text(order: "[roygbiv]", colors), match:"ogiv") then colors := sort_text(order: "cgivo", colors)
+	if match(sort_text(order: "[roygbiv]", colors), match:"ybvr") then colors := sort_text(order: "cbvry", colors)
+	if match(sort_text(order: "[roygbiv]", colors), match:"giro") then colors := sort_text(order: "cirog", colors)
+	if match(sort_text(order: "[roygbiv]", colors), match:"bvoy") then colors := sort_text(order: "cvoyb", colors)
+	if match(sort_text(order: "[roygbiv]", colors), match:"iryg") then colors := sort_text(order: "crygi", colors)
+	if match(sort_text(order: "[roygbiv]", colors), match:"vogb") then colors := sort_text(order: "cogbv", colors)
 	#### The selected blend
 	offset := 0
 	if contains(input, match:"offset 1") then offset := offset + 1

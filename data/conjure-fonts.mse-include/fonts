@@ -179,13 +179,13 @@ swap_fonts_info3_src :=		{ styling.custom_info_3_font	or else "" }
 #### specific swap functions
 name_font := {
 	swap_font_name(
-		src: swap_fonts_name_src(), 
+		src: swap_fonts_name_src(),
 		font_name: swap_fonts_name_default.name()
 	)
 }
 name_font_size := {
 	swap_font_size(
-		src: swap_fonts_name_src(), 
+		src: swap_fonts_name_src(),
 		font_size: swap_fonts_name_default.size()
 	) - shrink_name()
 }
@@ -210,13 +210,13 @@ name_font_italic := {
 
 name2_font := {
 	swap_font_name(
-		src: swap_fonts_name2_src(), 
+		src: swap_fonts_name2_src(),
 		font_name: swap_fonts_name2_default.name()
 	)
 }
 name2_font_size := {
 	swap_font_size(
-		src: swap_fonts_name2_src(), 
+		src: swap_fonts_name2_src(),
 		font_size: swap_fonts_name2_default.size()
 	) - shrink_name2()
 }
@@ -241,13 +241,13 @@ name2_font_italic := {
 
 name3_font := {
 	swap_font_name(
-		src: swap_fonts_name3_src(), 
+		src: swap_fonts_name3_src(),
 		font_name: swap_fonts_name3_default.name()
 	)
 }
 name3_font_size := {
 	swap_font_size(
-		src: swap_fonts_name3_src(), 
+		src: swap_fonts_name3_src(),
 		font_size: swap_fonts_name3_default.size()
 	) - shrink_name2()
 }
@@ -272,13 +272,13 @@ name3_font_italic := {
 
 type_font := {
 	swap_font_name(
-		src: swap_fonts_type_src(), 
+		src: swap_fonts_type_src(),
 		font_name: swap_fonts_type_default.name()
 	)
 }
 type_font_size := {
 	swap_font_size(
-		src: swap_fonts_type_src(), 
+		src: swap_fonts_type_src(),
 		font_size: swap_fonts_type_default.size()
 	) - shrink_type()
 }
@@ -303,13 +303,13 @@ type_font_italic := {
 
 type2_font := {
 	swap_font_name(
-		src: swap_fonts_type2_src(), 
+		src: swap_fonts_type2_src(),
 		font_name: swap_fonts_type2_default.name()
 	)
 }
 type2_font_size := {
 	swap_font_size(
-		src: swap_fonts_type2_src(), 
+		src: swap_fonts_type2_src(),
 		font_size: swap_fonts_type2_default.size()
 	) - shrink_type2()
 }
@@ -334,13 +334,13 @@ type2_font_italic := {
 
 type3_font := {
 	swap_font_name(
-		src: swap_fonts_type3_src(), 
+		src: swap_fonts_type3_src(),
 		font_name: swap_fonts_type3_default.name()
 	)
 }
 type3_font_size := {
 	swap_font_size(
-		src: swap_fonts_type3_src(), 
+		src: swap_fonts_type3_src(),
 		font_size: swap_fonts_type3_default.size()
 	) - shrink_type2()
 }
@@ -365,13 +365,13 @@ type3_font_italic := {
 
 rule_font := {
 	swap_font_name(
-		src: swap_fonts_rule_src(), 
+		src: swap_fonts_rule_src(),
 		font_name: swap_fonts_rule_default.name()
 	)
 }
 rule_font_size := {
 	swap_font_size(
-		src: swap_fonts_rule_src(), 
+		src: swap_fonts_rule_src(),
 		font_size: swap_fonts_rule_default.size()
 	)
 }
@@ -396,13 +396,13 @@ rule_font_italic := {
 
 rule2_font := {
 	swap_font_name(
-		src: swap_fonts_rule2_src(), 
+		src: swap_fonts_rule2_src(),
 		font_name: swap_fonts_rule2_default.name()
 	)
 }
 rule2_font_size := {
 	swap_font_size(
-		src: swap_fonts_rule2_src(), 
+		src: swap_fonts_rule2_src(),
 		font_size: swap_fonts_rule2_default.size()
 	)
 }
@@ -427,13 +427,13 @@ rule2_font_italic := {
 
 rule3_font := {
 	swap_font_name(
-		src: swap_fonts_rule3_src(), 
+		src: swap_fonts_rule3_src(),
 		font_name: swap_fonts_rule3_default.name()
 	)
 }
 rule3_font_size := {
 	swap_font_size(
-		src: swap_fonts_rule3_src(), 
+		src: swap_fonts_rule3_src(),
 		font_size: swap_fonts_rule3_default.size()
 	)
 }
@@ -458,13 +458,13 @@ rule3_font_italic := {
 
 lore_font := {
 	swap_font_name(
-		src: swap_fonts_lore_src(), 
+		src: swap_fonts_lore_src(),
 		font_name: swap_fonts_lore_default.name()
 	)
 }
 lore_font_size := {
 	swap_font_size(
-		src: swap_fonts_lore_src(), 
+		src: swap_fonts_lore_src(),
 		font_size: swap_fonts_lore_default.size()
 	)
 }
@@ -489,13 +489,13 @@ lore_font_italic := {
 
 lore2_font := {
 	swap_font_name(
-		src: swap_fonts_lore2_src(), 
+		src: swap_fonts_lore2_src(),
 		font_name: swap_fonts_lore2_default.name()
 	)
 }
 lore2_font_size := {
 	swap_font_size(
-		src: swap_fonts_lore2_src(), 
+		src: swap_fonts_lore2_src(),
 		font_size: swap_fonts_lore2_default.size()
 	)
 }
@@ -520,13 +520,13 @@ lore2_font_italic := {
 
 lore3_font := {
 	swap_font_name(
-		src: swap_fonts_lore3_src(), 
+		src: swap_fonts_lore3_src(),
 		font_name: swap_fonts_lore3_default.name()
 	)
 }
 lore3_font_size := {
 	swap_font_size(
-		src: swap_fonts_lore3_src(), 
+		src: swap_fonts_lore3_src(),
 		font_size: swap_fonts_lore3_default.size()
 	)
 }
@@ -551,13 +551,13 @@ lore3_font_italic := {
 
 info_font := {
 	swap_font_name(
-		src: swap_fonts_info_src(), 
+		src: swap_fonts_info_src(),
 		font_name: swap_fonts_info_default.name()
 	)
 }
 info_font_size := {
 	swap_font_size(
-		src: swap_fonts_info_src(), 
+		src: swap_fonts_info_src(),
 		font_size: swap_fonts_info_default.size()
 	)
 }
@@ -582,13 +582,13 @@ info_font_italic := {
 
 info2_font := {
 	swap_font_name(
-		src: swap_fonts_info2_src(), 
+		src: swap_fonts_info2_src(),
 		font_name: swap_fonts_info2_default.name()
 	)
 }
 info2_font_size := {
 	swap_font_size(
-		src: swap_fonts_info2_src(), 
+		src: swap_fonts_info2_src(),
 		font_size: swap_fonts_info2_default.size()
 	)
 }
@@ -613,13 +613,13 @@ info2_font_italic := {
 
 info3_font := {
 	swap_font_name(
-		src: swap_fonts_info3_src(), 
+		src: swap_fonts_info3_src(),
 		font_name: swap_fonts_info3_default.name()
 	)
 }
 info3_font_size := {
 	swap_font_size(
-		src: swap_fonts_info3_src(), 
+		src: swap_fonts_info3_src(),
 		font_size: swap_fonts_info3_default.size()
 	)
 }

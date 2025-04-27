@@ -5,37 +5,10 @@ round :=
 		or	input == "0"
 		or	input == "0.0"
 		or	input == "" then 0
-	else if	input > 0 then
-	(
-		int := to_int(input)
-		dec := input-int
-		if dec >= 0.5 then int+1 else int
-	)
 	else
 	(
-		int := to_int(input)
-		dec := input-int
-		if dec <= -0.5 then int-1 else int
-	)
-}
-
-round_away :=
-{
-	if		input == 0
-		or	input == "0"
-		or	input == "0.0"
-		or	input == "" then 0
-	else if	input > 0 then
-	(
-		int := to_int(input)
-		dec := input-int
-		if dec > 0.0 then int+1 else int
-	)
-	else
-	(
-		int := to_int(input)
-		dec := input-int
-		if dec < 0.0 then int-1 else int
+		half := if to_int(input) > 0 then 0.5 else -0.5
+		to_int(half+input)
 	)
 }
 
@@ -82,9 +55,9 @@ clamp :=
 get_alpha_percentage :=
 {
 	alpha_value :=	if input == "" then default
-					else to_number(input) or else default
+					else to_int(input) or else default
 	if alpha_value < 0 then 0.0
-	else if alpha_value <= 100 then alpha_value/100.0
+	else if alpha_value < 100 then alpha_value/100.0
 	else 1.0
 }
 
@@ -100,16 +73,50 @@ crop_safe :=
 	else crop(input, offset_x: offset_x, offset_y: offset_y, width: width, height: height)
 }
 
+crop_art :=
+{
+	crop(
+		input,
+		offset_x: 2 * art_left(),
+		offset_y: 2 * art_top(),
+		width: 2 * (art_right() - art_left()),
+		height: 2 * (art_bottom() - art_top())
+	)
+}
+
 popout_left :=		{ split := split_comma(styling.popout_art_coordinates or else ""); if length(split) > 3 and split.0 != "" and split.0 != "-" then clamp(split.0, maximum:2500, minimum:-500)	else 0 }
 popout_top :=		{ split := split_comma(styling.popout_art_coordinates or else ""); if length(split) > 3 and split.1 != "" and split.1 != "-" then clamp(split.1, maximum:3500, minimum:-500)	else 0 }
 popout_width :=		{ split := split_comma(styling.popout_art_coordinates or else ""); if length(split) > 3 and split.2 != "" and split.2 != "-" then clamp(split.2, maximum:2500, minimum:0)		else 0 }
 popout_height :=	{ split := split_comma(styling.popout_art_coordinates or else ""); if length(split) > 3 and split.3 != "" and split.3 != "-" then clamp(split.3, maximum:3500, minimum:0)		else 0 }
 
-namebox_background_image := { background_image(color: styling.namebox_color, alpha: styling.namebox_opacity_percentage) }
-typebox_background_image := { background_image(color: styling.typebox_color, alpha: styling.typebox_opacity_percentage) }
-textbox_background_image := { background_image(color: styling.textbox_color, alpha: styling.textbox_opacity_percentage) }
+default_box_background_alpha := 100
+default_box_alpha := 68
+
+transparent_namebox := { get_alpha_percentage(styling.namebox_background_opacity_percentage, default: default_box_background_alpha) < 1.0 and get_alpha_percentage(styling.namebox_opacity_percentage, default: default_box_alpha) < 1.0 }
+transparent_typebox := { get_alpha_percentage(styling.typebox_background_opacity_percentage, default: default_box_background_alpha) < 1.0 and get_alpha_percentage(styling.typebox_opacity_percentage, default: default_box_alpha) < 1.0 }
+transparent_textbox := { get_alpha_percentage(styling.textbox_background_opacity_percentage, default: default_box_background_alpha) < 1.0 and get_alpha_percentage(styling.textbox_opacity_percentage, default: default_box_alpha) < 1.0 }
+
+namebox_background_image := { background_image(folder: "/conjure-shared.mse-include/namebox",	alpha: styling.namebox_background_opacity_percentage) }
+typebox_background_image := { background_image(folder: "/conjure-shared.mse-include/typebox",	alpha: styling.typebox_background_opacity_percentage) }
+textbox_background_image := { background_image(folder: "textbox",								alpha: styling.textbox_background_opacity_percentage) }
 
 background_image :=
+{
+	alpha := get_alpha_percentage(alpha, default: default_alpha)
+	set_alpha(
+		color_blend(
+			card.frame_1,
+			folder: folder
+		),
+		alpha: alpha
+	)
+}@(default_alpha: default_box_background_alpha)
+
+namebox_image := { colorable_image(color: styling.namebox_color, alpha: styling.namebox_opacity_percentage) }
+typebox_image := { colorable_image(color: styling.typebox_color, alpha: styling.typebox_opacity_percentage) }
+textbox_image := { colorable_image(color: styling.textbox_color, alpha: styling.textbox_opacity_percentage) }
+
+colorable_image :=
 {
 	alpha := get_alpha_percentage(alpha, default: default_alpha)
 	set_alpha(
@@ -119,7 +126,7 @@ background_image :=
 		),
 		alpha: alpha
 	)
-}@(default_alpha: 45)
+}@(default_alpha: default_box_alpha)
 
 split_comma := split_text@(match:" *, *")
 replace_spaces_with_commas := replace@(match: ",? +", replace: ",")
@@ -331,30 +338,45 @@ type_script :=
 }
 
 unique_mana := sort_text@(order: "<ROYGBIV>")
-mana_is_web := { number_of_items(in: unique_mana()) == 4 }
-mana_has_web := { mana_is_web() and match(sort_text(order:"(ROYGBIV)", unique_mana()), match:"RYBI|OGIV|YBVR|GIRO|BVOY|IRYG|VOGB") }
-mana_is_wedge := { number_of_items(in: unique_mana()) == 3 }
-mana_has_wedge := { mana_is_wedge() and match(sort_text(order:"(RGVYIOB)", unique_mana()), match:"RGV|GVY|VYI|YIO|IOB|OBR|BRG") }
+cyclic_mana := sort_text@(order: "(ROYGBIV)")
+match_web := match@(match: "RYBI|OGIV|YBVR|GIRO|BVOY|IRYG|VOGB")
+match_wedge := match@(match: "RGV|GVY|VYI|YIO|IOB|OBR|BRG")
+mana_has_web :=
+{
+	mana := cyclic_mana(unique_mana())
+	length(mana) == 4 and match_web(mana)
+}
+mana_has_wedge :=
+{
+	mana := cyclic_mana(unique_mana())
+	length(mana) == 3 and match_wedge(mana)
+}
 mana_has_hybrid := match@(match: "[/|]")
 
-web_sort := {
-    if      sort_text(order:"(ROYGBIV)", unique_mana()) == "RYBI" then sort_text(order: "YBIRX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "OGIV" then sort_text(order: "GIVOX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "YBVR" then sort_text(order: "BVRYX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "GIRO" then sort_text(order: "IROGX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "BVOY" then sort_text(order: "VOYBX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "IRYG" then sort_text(order: "RYGIX[0123456789]")
-    else if sort_text(order:"(ROYGBIV)", unique_mana()) == "VOGB" then sort_text(order: "OBGVX[0123456789]")
-    else sort_text(order: "/(ROYGBIV)X[0123456789]")
-    }
+normal_sort := sort_text@(order: "/(ROYGBIV)X[0123456789]")
+web_sort :=
+{
+	mana := cyclic_mana(unique_mana())
+	if		mana == "RYBI"	then	sort_text(order: "YBIRX[0123456789]")
+	else if	mana == "OGIV"	then	sort_text(order: "GIVOX[0123456789]")
+	else if	mana == "YBVR"	then	sort_text(order: "BVRYX[0123456789]")
+	else if	mana == "GIRO"	then	sort_text(order: "IROGX[0123456789]")
+	else if	mana == "BVOY"	then	sort_text(order: "VOYBX[0123456789]")
+	else if	mana == "IRYG"	then	sort_text(order: "RYGIX[0123456789]")
+	else if	mana == "VOGB"	then	sort_text(order: "OBGVX[0123456789]")
+	else							normal_sort()
+}
+wedge_sort := sort_text@(order: "/(RGVYIOB)X[0123456789]")
+hybrid_sort := sort_text@(order: "[/(ROYGBIV)X[0123456789]]")
 
-mana_filter := 
-    to_upper + {
-	if mana_has_hybrid() then sort_text(order: "[/(ROYGBIV)X[0123456789]]")
-    else if mana_has_web() then web_sort()
-    else if mana_has_wedge() then sort_text(order: "/(RGVYIOB)X[0123456789]")
-    else sort_text(order: "/(ROYGBIV)X[0123456789]")
-    }
+mana_filter :=
+	to_upper +
+	{
+		if mana_has_hybrid() then hybrid_sort()
+		else if mana_has_web() then web_sort()
+		else if mana_has_wedge() then wedge_sort()
+		else normal_sort()
+	}
 
 mana_cost_sort_ROYGBIV :=
 	mana_filter +
@@ -364,8 +386,8 @@ mana_cost_sort_ROYGBIV :=
 		in_context: "(^|[^/])<match>($|[^/])",
 		replace: {sort_text(order:"in_place(9876543210(ROYGBIV))")}
 	) +
-    ### sort hybrid wedges
-    replace@(
+	### sort hybrid wedges
+	replace@(
 		match: "G/V/R|V/Y/G|Y/I/V|I/O/Y|O/B/I|B/R/O|R/G/B",
 		in_context: "(^|[^/])<match>($|[^/])",
 		replace: {sort_text(order:"in_place(9876543210(RGVYIOB))")}
@@ -606,15 +628,15 @@ rule_text_script :=
 	) +
 	### step 6 : automatic capitalization, but not after "("
 	replace@(
-		match: "([ ]*: |—| — )"		### preceded by this
-		     + "([[:lower:]])"		### match this
-		     + "(?![)])",			### not followed by this
+		match:		"([ ]*: |—| — )"	### preceded by this
+				+	"([[:lower:]])"		### match this
+				+	"(?![)])",			### not followed by this
 		replace: { _1 + to_upper(_2) }
 	) +
 	### step 7 : fix for soft line breaks
 	fix_soft_line +
 	### step 8 : spellcheck
-	{ 
+	{
 		if set.spell_check then
 		check_spelling(
 			language: "en_US",
